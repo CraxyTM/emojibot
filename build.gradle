@@ -14,10 +14,12 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.slf4j:slf4j-simple:1.7.31'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
     implementation 'org.javacord:javacord:3.3.0'
     implementation("net.dv8tion:JDA:4.3.0_277")
+    compile 'io.javalin:javalin:3.13.10'
 }
 
 test {
