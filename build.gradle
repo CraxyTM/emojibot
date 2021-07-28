@@ -5,6 +5,25 @@ plugins {
 group 'de.felix'
 version '1.0-SNAPSHOT'
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+configurations {
+    jar.archiveName = rootProject.name + ".jar"
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'de.felix.emojibot.Main'
+        )
+    }
+
+    from { (configurations.runtimeClasspath).collect { it.isDirectory() ? it : zipTree(it) } } {
+        exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+    }
+}
+
 repositories {
     mavenCentral()
     maven {
@@ -18,7 +37,9 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
     implementation 'org.javacord:javacord:3.3.0'
-    implementation 'net.dv8tion:JDA:4.3.0_277'
+    implementation('net.dv8tion:JDA:4.3.0_277') {
+        exclude module: 'opus-java'
+    }
     implementation 'io.javalin:javalin:3.13.10'
 }
 
