@@ -2,6 +2,7 @@ package de.felix.emojibot;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Icon;
@@ -53,6 +54,13 @@ public class EmojiBot extends ListenerAdapter {
     @Override
     public void onSlashCommand(@NotNull SlashCommandEvent event) {
         if (!event.getName().equalsIgnoreCase("emoji")) return;
+
+        if ((event.getMember() != null) && !event.getMember().hasPermission(Permission.MANAGE_EMOTES)) {
+            event.reply("You must have the " + Permission.MANAGE_EMOTES.getName() + " permission to use this command.")
+                    .setEphemeral(false)
+                    .queue();
+            return;
+        }
 
         if (event.getSubcommandName() != null && event.getSubcommandName().equalsIgnoreCase("add")) {
             OptionMapping name = event.getOption("name");
