@@ -75,7 +75,7 @@ public class EmojiBot extends ListenerAdapter {
                 return;
             }
 
-            Emote emoji = event.getGuild().createEmote(name.getAsString(), icon).complete();
+            Emote emoji = event.getGuild().createEmote(name.getAsString(), icon).reason("Emoji added by " + event.getUser().getAsTag() + " (" + event.getUser().getId() + ")").complete();
             event.reply("Emoji added " + emoji.getAsMention()).setEphemeral(false).queue();
         }
 
