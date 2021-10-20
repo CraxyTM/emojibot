@@ -45,7 +45,7 @@ public class EmojiBot extends ListenerAdapter {
                         .addOption(OptionType.STRING, "link", "The link to the image of the new emoji", true))
                 .addSubcommands(new SubcommandData("remove", "Removes an emoji from your server!")
                         .addOption(OptionType.STRING, "emoji", "The emoji to remove", true))
-                .addSubcommands(new SubcommandData("help","Helps you using the EmojiBot"));
+                .addSubcommands(new SubcommandData("help","Helps you use the EmojiBot"));
 
         jda.updateCommands().addCommands(emojiCommand).queue();
     }
