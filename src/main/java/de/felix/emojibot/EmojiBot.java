@@ -45,7 +45,7 @@ public class EmojiBot extends ListenerAdapter {
                         .addOption(OptionType.STRING, "link", "The link to the image of the new emoji", true))
                 .addSubcommands(new SubcommandData("remove", "Removes an emoji from your server!")
                         .addOption(OptionType.STRING, "emoji", "The emoji to remove", true))
-                .addSubcommands(new SubcommandData("help","Helps you use the EmojiBot"));
+                .addSubcommands(new SubcommandData("help", "Helps you use the EmojiBot"));
 
         jda.updateCommands().addCommands(emojiCommand).queue();
     }
@@ -71,70 +71,74 @@ public class EmojiBot extends ListenerAdapter {
             return;
         }
 
-        if (event.getSubcommandName().equalsIgnoreCase("remove")) {
-            OptionMapping emojiOption = event.getOption("emoji");
-            if (emojiOption == null) {
-                event.reply("Emoji null!").setEphemeral(true).queue();
-                return;
-            }
+        switch (event.getSubcommandName().toLowerCase()) {
+            case "remove": commandRemove(event); break;
+            case "add": commandAdd(event); break;
+            case "help": commandHelp(event); break;
+        }
+    }
 
-            String emoji = emojiOption.getAsString();
-
-            for (Emote emote : event.getGuild().getEmotes()) {
-                if (emoji.contains(emote.getId())) {
-                    event.reply("Removed Emote: " + emote.getAsMention()).setEphemeral(false).queue();
-                    emote.delete().reason("Emoji removed by " + event.getUser().getAsTag() + " (" + event.getUser().getId() + ")").complete();
-                    return;
-                }
-            }
-            event.reply("Cannot find emote").setEphemeral(true).queue();
+    private void commandRemove(SlashCommandEvent event) {
+        OptionMapping emojiOption = event.getOption("emoji");
+        if (emojiOption == null) {
+            event.reply("Emoji null!").setEphemeral(true).queue();
+            return;
         }
 
-        if (event.getSubcommandName().equalsIgnoreCase("add")) {
-            OptionMapping name = event.getOption("name");
-            OptionMapping link = event.getOption("link");
-            if (name == null || link == null) {
-                event.reply("Name or link null!").setEphemeral(true).queue();
-                return;
-            }
+        String emoji = emojiOption.getAsString();
 
-            Icon icon;
-            try {
-                icon = Icon.from(new URL(link.getAsString()).openStream());
-            } catch (IOException e) {
-                event.reply("Error while grabbing image from link: " + e.getMessage()).setEphemeral(true).queue();
+        for (Emote emote : event.getGuild().getEmotes()) {
+            if (emoji.contains(emote.getId())) {
+                event.reply("Removed Emote: " + emote.getAsMention()).setEphemeral(false).queue();
+                emote.delete().reason("Emoji removed by " + event.getUser().getAsTag() + " (" + event.getUser().getId() + ")").complete();
                 return;
-            }
-
-            if (icon.getEncoding().getBytes().length > 256000) {
-                event.reply("Emoji cannot be larger than 256 kb").setEphemeral(true).queue();
-                return;
-            }
-
-            try {
-                Emote emoji = event.getGuild().createEmote(name.getAsString(), icon).reason("Emoji added by " + event.getUser().getAsTag() + " (" + event.getUser().getId() + ")").complete();
-                event.reply("Emoji added " + emoji.getAsMention()).setEphemeral(false).queue();
-            } catch (ErrorResponseException e) {
-                event.reply("Error: " + e.getMessage()).setEphemeral(true).queue();
             }
         }
+        event.reply("Cannot find emote").setEphemeral(true).queue();
+    }
 
-        if (event.getSubcommandName().equalsIgnoreCase("help")){
-            event.reply("To be able to use the EmojiBot you need the permission to edit emojis on your server." +
-                    "\nIf you do not have the permission you might need to ask your server admin to give it to you." +
-                    "\nIf you have got the permission you can add an emoji via the command: " +
-                    "\n" +
-                    "\n/emoji add <name of the emoji> <complete link of the emoji>" +
-                    "\n" +
-                    "\nIf you want to delete an emoji you can do it with this command:" +
-                    "\n" +
-                    "\n/emoji remove <the emoji you want to remove>" +
-                    "\n" +
-                    "\nTo get more information about the EmojiBot you can visit our GitHub-page:" +
-                    "\n" +
-                    "\nhttps://github.com/CraxyTM/emojibot ").setEphemeral(true).queue();
+    private void commandAdd(SlashCommandEvent event) {
+        OptionMapping name = event.getOption("name");
+        OptionMapping link = event.getOption("link");
+        if (name == null || link == null) {
+            event.reply("Name or link null!").setEphemeral(true).queue();
+            return;
         }
 
+        Icon icon;
+        try {
+            icon = Icon.from(new URL(link.getAsString()).openStream());
+        } catch (IOException e) {
+            event.reply("Error while grabbing image from link: " + e.getMessage()).setEphemeral(true).queue();
+            return;
+        }
 
+        if (icon.getEncoding().getBytes().length > 256000) {
+            event.reply("Emoji cannot be larger than 256 kb").setEphemeral(true).queue();
+            return;
+        }
+
+        try {
+            Emote emoji = event.getGuild().createEmote(name.getAsString(), icon).reason("Emoji added by " + event.getUser().getAsTag() + " (" + event.getUser().getId() + ")").complete();
+            event.reply("Emoji added " + emoji.getAsMention()).setEphemeral(false).queue();
+        } catch (ErrorResponseException e) {
+            event.reply("Error: " + e.getMessage()).setEphemeral(true).queue();
+        }
+    }
+
+    private void commandHelp(SlashCommandEvent event) {
+        event.reply("To be able to use the EmojiBot you need the permission to edit emojis on your server." +
+                "\nIf you do not have the permission you might need to ask your server admin to give it to you." +
+                "\nIf you have got the permission you can add an emoji via the command: " +
+                "\n" +
+                "\n/emoji add <name of the emoji> <complete link of the emoji>" +
+                "\n" +
+                "\nIf you want to delete an emoji you can do it with this command:" +
+                "\n" +
+                "\n/emoji remove <the emoji you want to remove>" +
+                "\n" +
+                "\nTo get more information about the EmojiBot you can visit our GitHub-page:" +
+                "\n" +
+                "\nhttps://github.com/CraxyTM/emojibot ").setEphemeral(true).queue();
     }
 }
