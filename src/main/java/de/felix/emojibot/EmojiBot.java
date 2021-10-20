@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Icon;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -89,11 +90,6 @@ public class EmojiBot extends ListenerAdapter {
         }
 
         if (event.getSubcommandName().equalsIgnoreCase("add")) {
-            if (event.getGuild().getEmotes().size() + 1 > event.getGuild().getMaxEmotes()) {
-                event.reply("Maximum emojis reached! :(").setEphemeral(true).queue();
-                return;
-            }
-
             OptionMapping name = event.getOption("name");
             OptionMapping link = event.getOption("link");
             if (name == null || link == null) {
@@ -109,8 +105,12 @@ public class EmojiBot extends ListenerAdapter {
                 return;
             }
 
-            Emote emoji = event.getGuild().createEmote(name.getAsString(), icon).reason("Emoji added by " + event.getUser().getAsTag() + " (" + event.getUser().getId() + ")").complete();
-            event.reply("Emoji added " + emoji.getAsMention()).setEphemeral(false).queue();
+            try {
+                Emote emoji = event.getGuild().createEmote(name.getAsString(), icon).reason("Emoji added by " + event.getUser().getAsTag() + " (" + event.getUser().getId() + ")").complete();
+                event.reply("Emoji added " + emoji.getAsMention()).setEphemeral(false).queue();
+            } catch (ErrorResponseException e) {
+                event.reply("Error: " + e.getMessage()).setEphemeral(true).queue();
+            }
         }
 
 
