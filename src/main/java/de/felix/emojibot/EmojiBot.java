@@ -105,6 +105,11 @@ public class EmojiBot extends ListenerAdapter {
                 return;
             }
 
+            if (icon.getEncoding().getBytes().length > 256000) {
+                event.reply("Emoji cannot be larger than 256 kb").setEphemeral(true).queue();
+                return;
+            }
+
             try {
                 Emote emoji = event.getGuild().createEmote(name.getAsString(), icon).reason("Emoji added by " + event.getUser().getAsTag() + " (" + event.getUser().getId() + ")").complete();
                 event.reply("Emoji added " + emoji.getAsMention()).setEphemeral(false).queue();
