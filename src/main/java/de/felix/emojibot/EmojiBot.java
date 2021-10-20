@@ -89,6 +89,11 @@ public class EmojiBot extends ListenerAdapter {
         }
 
         if (event.getSubcommandName().equalsIgnoreCase("add")) {
+            if (event.getGuild().getEmotes().size() + 1 > event.getGuild().getMaxEmotes()) {
+                event.reply("Maximum emojis reached! :(").setEphemeral(true).queue();
+                return;
+            }
+
             OptionMapping name = event.getOption("name");
             OptionMapping link = event.getOption("link");
             if (name == null || link == null) {
