@@ -44,7 +44,8 @@ public class EmojiBot extends ListenerAdapter {
                         .addOption(OptionType.STRING, "name", "The name of the new emoji", true)
                         .addOption(OptionType.STRING, "link", "The link to the image of the new emoji", true))
                 .addSubcommands(new SubcommandData("remove", "Removes an emoji from your server!")
-                        .addOption(OptionType.STRING, "emoji", "The emoji to remove", true));
+                        .addOption(OptionType.STRING, "emoji", "The emoji to remove", true))
+                .addSubcommands(new SubcommandData("help","Helps you use the EmojiBot"));
 
         jda.updateCommands().addCommands(emojiCommand).queue();
     }
@@ -116,6 +117,22 @@ public class EmojiBot extends ListenerAdapter {
             } catch (ErrorResponseException e) {
                 event.reply("Error: " + e.getMessage()).setEphemeral(true).queue();
             }
+        }
+
+        if (event.getSubcommandName().equalsIgnoreCase("help")){
+            event.reply("To be able to use the EmojiBot you need the permission to edit emojis on your server." +
+                    "\nIf you do not have the permission you might need to ask your server admin to give it to you." +
+                    "\nIf you have got the permission you can add an emoji via the command: " +
+                    "\n" +
+                    "\n/emoji add <name of the emoji> <complete link of the emoji>" +
+                    "\n" +
+                    "\nIf you want to delete an emoji you can do it with this command:" +
+                    "\n" +
+                    "\n/emoji remove <the emoji you want to remove>" +
+                    "\n" +
+                    "\nTo get more information about the EmojiBot you can visit our GitHub-page:" +
+                    "\n" +
+                    "\nhttps://github.com/CraxyTM/emojibot ").setEphemeral(true).queue();
         }
 
 
