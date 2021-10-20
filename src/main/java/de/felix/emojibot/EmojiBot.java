@@ -41,7 +41,9 @@ public class EmojiBot extends ListenerAdapter {
         CommandData emojiCommand = new CommandData("emoji", "Manage the emojis in your server!")
                 .addSubcommands(new SubcommandData("add", "Adds a new emoji to your server!")
                         .addOption(OptionType.STRING, "name", "The name of the new emoji", true)
-                        .addOption(OptionType.STRING, "link", "The link to the image of the new emoji", true));
+                        .addOption(OptionType.STRING, "link", "The link to the image of the new emoji", true))
+                .addSubcommands(new SubcommandData("remove", "Removes an emoji from your server!")
+                        .addOption(OptionType.STRING, "emoji", "The emoji to remove", true));
 
         jda.updateCommands().addCommands(emojiCommand).queue();
     }
@@ -62,7 +64,30 @@ public class EmojiBot extends ListenerAdapter {
             return;
         }
 
-        if (event.getSubcommandName() != null && event.getSubcommandName().equalsIgnoreCase("add")) {
+        if (event.getSubcommandName() == null || event.getGuild() == null) {
+            return;
+        }
+
+        if (event.getSubcommandName().equalsIgnoreCase("remove")) {
+            OptionMapping emojiOption = event.getOption("emoji");
+            if (emojiOption == null) {
+                event.reply("Emoji null!").setEphemeral(true).queue();
+                return;
+            }
+
+            String emoji = emojiOption.getAsString();
+
+            for (Emote emote : event.getGuild().getEmotes()) {
+                if (emoji.contains(emote.getId())) {
+                    event.reply("Removed Emote: " + emote.getAsMention()).setEphemeral(false).queue();
+                    emote.delete().reason("Emoji removed by " + event.getUser().getAsTag() + " (" + event.getUser().getId() + ")").complete();
+                    return;
+                }
+            }
+            event.reply("Cannot find emote").setEphemeral(true).queue();
+        }
+
+        if (event.getSubcommandName().equalsIgnoreCase("add")) {
             OptionMapping name = event.getOption("name");
             OptionMapping link = event.getOption("link");
             if (name == null || link == null) {
