@@ -65,6 +65,7 @@ public class EmojiBot extends ListenerAdapter {
         }
 
         if (event.getSubcommandName() == null || event.getGuild() == null) {
+            event.reply("Subcommand or guild is null").setEphemeral(true).queue();
             return;
         }
 
@@ -88,6 +89,11 @@ public class EmojiBot extends ListenerAdapter {
         }
 
         if (event.getSubcommandName().equalsIgnoreCase("add")) {
+            if (event.getGuild().getEmotes().size() + 1 > event.getGuild().getMaxEmotes()) {
+                event.reply("Maximum emojis reached! :(").setEphemeral(true).queue();
+                return;
+            }
+
             OptionMapping name = event.getOption("name");
             OptionMapping link = event.getOption("link");
             if (name == null || link == null) {
@@ -100,11 +106,6 @@ public class EmojiBot extends ListenerAdapter {
                 icon = Icon.from(new URL(link.getAsString()).openStream());
             } catch (IOException e) {
                 event.reply("Error while grabbing image from link: " + e.getMessage()).setEphemeral(true).queue();
-                return;
-            }
-
-            if (event.getGuild() == null) {
-                event.reply("Guild is null").setEphemeral(true).queue();
                 return;
             }
 
