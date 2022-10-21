@@ -22,12 +22,11 @@ import java.net.URL;
 
 public class EmojiBot extends ListenerAdapter {
 
-    private JDA jda;
-
     public EmojiBot(String discordToken) {
         //Required for downloading images from Discord CDN
         System.setProperty("http.agent", "Chrome");
 
+        JDA jda;
         try {
             jda = JDABuilder.createDefault(discordToken)
                     .setActivity(Activity.playing("/emoji 🤯"))
