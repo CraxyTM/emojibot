@@ -9,7 +9,7 @@ sourceCompatibility = 17
 targetCompatibility = 17
 
 configurations {
-    jar.archiveName = rootProject.name + ".jar"
+    jar.archiveFileName = rootProject.name + ".jar"
 }
 
 jar {
