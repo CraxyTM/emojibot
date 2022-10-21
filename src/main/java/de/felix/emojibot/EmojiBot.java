@@ -65,15 +65,22 @@ public class EmojiBot extends ListenerAdapter {
             return;
         }
 
+        if(!event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_EMOTES)) {
+            event.reply("I need the " + Permission.MANAGE_EMOTES.getName() + " permission on this server. Please contact a server admin.")
+                    .setEphemeral(true)
+                    .queue();
+            return;
+        }
+
         if (event.getSubcommandName() == null || event.getGuild() == null) {
             event.reply("Subcommand or guild is null").setEphemeral(true).queue();
             return;
         }
 
         switch (event.getSubcommandName().toLowerCase()) {
-            case "remove": commandRemove(event); break;
-            case "add": commandAdd(event); break;
-            case "help": commandHelp(event); break;
+            case "remove" -> commandRemove(event);
+            case "add" -> commandAdd(event);
+            case "help" -> commandHelp(event);
         }
     }
 
